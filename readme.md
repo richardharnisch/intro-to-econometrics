@@ -1,0 +1,1 @@
+Repository to keep my work for the course "Introduction to Econometrics" at the University of Groningen. The repository contains LaTeX files for assignments, and whatever else I work on. The repo is public because assignments are graded on effort, not correctness.
