@@ -15,13 +15,13 @@
 % answer environment
 \makeatletter
 \newcommand{\answer}[1]{%
-  \par\medskip
-  \noindent
-  \hspace*{-\@totalleftmargin}%
-  \fbox{%
-    \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{#1}%
-  }%
-  \par\medskip
+    \par\medskip
+    \noindent
+    \hspace*{-\@totalleftmargin}%
+    \fbox{%
+        \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{#1}%
+    }%
+    \par\medskip
 }
 \makeatother
 
@@ -29,112 +29,112 @@
 
 \begin{enumerate}
     \item (4 points) Show that Assumptions 1.2 and 1.4 (see Hayashi or lecture notes) imply
-    \begin{align}
-        \text{Var}(\varepsilon_i) &= \sigma^2, \quad (i = 1, \ldots, n) \\
-        \text{Cov}(\varepsilon_i, \varepsilon_j) &= 0, \quad (i, j = 1, \ldots, n, i \neq j)
-    \end{align}
+          \begin{align}
+              \text{Var}(\varepsilon_i)                & = \sigma^2, \quad (i = 1, \ldots, n)       \\
+              \text{Cov}(\varepsilon_i, \varepsilon_j) & = 0, \quad (i, j = 1, \ldots, n, i \neq j)
+          \end{align}
 
-    \answer{
-            Assumption 1.2: $\mathbb{E}(\varepsilon_i | X) = 0$.\\
-            Assumption 1.4: $\mathbb{E}(\varepsilon_i^2 | X) = \sigma^2 > 0$ and $\mathbb{E}(\varepsilon_i \varepsilon_j | X) = 0$ for $i \neq j$.
-            \\ \\
+          \answer{
+              Assumption 1.2: $\mathbb{E}(\varepsilon_i | X) = 0$.\\
+              Assumption 1.4: $\mathbb{E}(\varepsilon_i^2 | X) = \sigma^2 > 0$ and $\mathbb{E}(\varepsilon_i \varepsilon_j | X) = 0$ for $i \neq j$.
+              \\ \\
 
-            Firstly, we know that from the definition of variance that $\text{Var}(\varepsilon_i) = \mathbb{E}(\varepsilon_i^2) - \mathbb{E}(\varepsilon_i)^2$. \\
-            Using the law of total expectation, we can write $\mathbb{E}(\varepsilon_i^2) = \mathbb{E}(\mathbb{E}(\varepsilon_i^2 | X))$ and $\mathbb{E}(\varepsilon_i) = \mathbb{E}(\mathbb{E}(\varepsilon_i | X)) = \mathbb{E}[0] = 0$. Substituting the assumptions gives $\text{Var}(\varepsilon_i) = \sigma^2$.
-            \\ \\
-            Secondly, we know that $\text{Cov}(\varepsilon_i, \varepsilon_j) = \mathbb{E}(\varepsilon_i \varepsilon_j) - \mathbb{E}(\varepsilon_i)\mathbb{E}(\varepsilon_j)$. Using the law of total expectation again gives $\text{Cov}(\varepsilon_i, \varepsilon_j) = \mathbb{E}(\mathbb{E}(\varepsilon_i \varepsilon_j | X)) - 0 = 0$.
-}
+              Firstly, we know that from the definition of variance that $\text{Var}(\varepsilon_i) = \mathbb{E}(\varepsilon_i^2) - \mathbb{E}(\varepsilon_i)^2$. \\
+              Using the law of total expectation, we can write $\mathbb{E}(\varepsilon_i^2) = \mathbb{E}(\mathbb{E}(\varepsilon_i^2 | X))$ and $\mathbb{E}(\varepsilon_i) = \mathbb{E}(\mathbb{E}(\varepsilon_i | X)) = \mathbb{E}[0] = 0$. Substituting the assumptions gives $\text{Var}(\varepsilon_i) = \sigma^2$.
+              \\ \\
+              Secondly, we know that $\text{Cov}(\varepsilon_i, \varepsilon_j) = \mathbb{E}(\varepsilon_i \varepsilon_j) - \mathbb{E}(\varepsilon_i)\mathbb{E}(\varepsilon_j)$. Using the law of total expectation again gives $\text{Cov}(\varepsilon_i, \varepsilon_j) = \mathbb{E}(\mathbb{E}(\varepsilon_i \varepsilon_j | X)) - 0 = 0$.
+          }
 
     \item (2 points) A study relating college GPA (grades average) to time spent in various activities has a data set which includes, for each student observed, the average number of hours spent each week in four activities: studying ($st$), sleeping ($sl$), working ($w$), leisure ($l$). Any activity is put into one of four categories, so that for each student the sum of hours in the four activities must be 168. It is proposed that the following model should be used:
-    \[
-    \text{GPA}_i = \beta_0 + \beta_1 st_i + \beta_2 sl_i + \beta_3 w_i + \beta_4 l_i + \epsilon_i
-    \]
-    \begin{enumerate}
-        \item Explain clearly why this model cannot be used to obtain parameter estimates? Consider this in the context of the four assumptions.
-        
-        \answer{
-                The model cannot be used to obtain parameter estimates because the regressors are perfectly multicollinear. This violates Assumption 1.3, which states that the regressors must not be perfectly collinear. In this case, we have $st_i + sl_i + w_i + l_i = 168$ for all $i$, which means that one of the regressors can be expressed as a linear combination of the others. For example, we can express $l_i$ as $l_i = 168 - st_i - sl_i - w_i$. This perfect multicollinearity leads to an infinite number of solutions for the parameter estimates, making it impossible to identify the individual effects of each activity on GPA.
-            }
+          \[
+              \text{GPA}_i = \beta_0 + \beta_1 st_i + \beta_2 sl_i + \beta_3 w_i + \beta_4 l_i + \epsilon_i
+          \]
+          \begin{enumerate}
+              \item Explain clearly why this model cannot be used to obtain parameter estimates? Consider this in the context of the four assumptions.
 
-        \item How could the model be reformulated so that it can be used to estimate the parameters?
-        
-        \answer{
-            We can reformulate the model by simply omitting one of the regressors, for example, we can omit $l_i$ and rewrite the model as:
-\[
-\text{GPA}_i = \beta_0 + \beta_1 st_i + \beta_2 sl_i + \beta_3 w_i + \epsilon_i
-\]
-In this reformulated model, we can interpret $\beta_1$, $\beta_2$, and $\beta_3$ as the effects of studying, sleeping, and working on GPA, respectively, while the effect of leisure time is captured in the intercept $\beta_0$ and the error term $\epsilon_i$.
-        }
-    \end{enumerate}
-    
+                    \answer{
+                        The model cannot be used to obtain parameter estimates because the regressors are perfectly multicollinear. This violates Assumption 1.3, which states that the regressors must not be perfectly collinear. In this case, we have $st_i + sl_i + w_i + l_i = 168$ for all $i$, which means that one of the regressors can be expressed as a linear combination of the others. For example, we can express $l_i$ as $l_i = 168 - st_i - sl_i - w_i$. This perfect multicollinearity leads to an infinite number of solutions for the parameter estimates, making it impossible to identify the individual effects of each activity on GPA.
+                    }
+
+              \item How could the model be reformulated so that it can be used to estimate the parameters?
+
+                    \answer{
+                        We can reformulate the model by simply omitting one of the regressors, for example, we can omit $l_i$ and rewrite the model as:
+                        \[
+                            \text{GPA}_i = \beta_0 + \beta_1 st_i + \beta_2 sl_i + \beta_3 w_i + \epsilon_i
+                        \]
+                        In this reformulated model, we can interpret $\beta_1$, $\beta_2$, and $\beta_3$ as the effects of studying, sleeping, and working on GPA, respectively, while the effect of leisure time is captured in the intercept $\beta_0$ and the error term $\epsilon_i$.
+                    }
+          \end{enumerate}
+
     \item (4 points) Consider the following two regressions
-    \begin{align*}
-        y_i &= \beta_1 + \beta_2 \ln(x_{i2}) + \beta_3 x_{i3} + \varepsilon_i \\
-        y_i &= \alpha_1 + \alpha_2 \ln(x^*_{i2}) + \alpha_3 x^*_{i3} + \varepsilon_i
-    \end{align*}
-    where $x^*_{i2} = x_{i2}/1000$ and $x^*_{i3} = x_{i3}/1000$. Stacking the $n$ observations gives:
-    \[
-    \mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon} \quad \text{and} \quad \mathbf{y} = \mathbf{Z}\boldsymbol{\alpha} + \boldsymbol{\varepsilon}
-    \]
-    where $\mathbf{y} = (y_1, \ldots, y_n)'$; $\boldsymbol{\varepsilon} = (\varepsilon_1, \ldots, \varepsilon_n)'$, $\boldsymbol{\beta} = (\beta_1, \beta_2, \beta_3)'$, $\boldsymbol{\alpha} = (\alpha_1, \alpha_2, \alpha_3)'$ and
-    \[
-    \mathbf{X} = \begin{pmatrix}
-        1 & \ln(x_{12}) & x_{13} \\
-        1 & \ln(x_{22}) & x_{23} \\
-        \ldots & \ldots & \ldots \\
-        1 & \ln(x_{n2}) & x_{n3}
-    \end{pmatrix}, \quad
-    \mathbf{Z} = \begin{pmatrix}
-        1 & \ln(x^*_{12}) & x_{13}/1000 \\
-        1 & \ln(x^*_{22}) & x_{23}/1000 \\
-        \ldots & \ldots & \ldots \\
-        1 & \ln(x^*_{n2}) & x_{n3}/1000
-    \end{pmatrix}
-    \]
-        
-    \begin{enumerate}
-        \item Show that the columns of $\mathbf{Z}$ can be written as linear combinations of the columns of $\mathbf{X}$, i.e.\ $\mathbf{Z} = \mathbf{XA}$ for some $(3 \times 3)$ matrix $\mathbf{A}$. Find the elements of $\mathbf{A}$.
-        
-        \answer{
+          \begin{align*}
+              y_i & = \beta_1 + \beta_2 \ln(x_{i2}) + \beta_3 x_{i3} + \varepsilon_i        \\
+              y_i & = \alpha_1 + \alpha_2 \ln(x^*_{i2}) + \alpha_3 x^*_{i3} + \varepsilon_i
+          \end{align*}
+          where $x^*_{i2} = x_{i2}/1000$ and $x^*_{i3} = x_{i3}/1000$. Stacking the $n$ observations gives:
+          \[
+              \mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon} \quad \text{and} \quad \mathbf{y} = \mathbf{Z}\boldsymbol{\alpha} + \boldsymbol{\varepsilon}
+          \]
+          where $\mathbf{y} = (y_1, \ldots, y_n)'$; $\boldsymbol{\varepsilon} = (\varepsilon_1, \ldots, \varepsilon_n)'$, $\boldsymbol{\beta} = (\beta_1, \beta_2, \beta_3)'$, $\boldsymbol{\alpha} = (\alpha_1, \alpha_2, \alpha_3)'$ and
+          \[
+              \mathbf{X} = \begin{pmatrix}
+                  1      & \ln(x_{12}) & x_{13} \\
+                  1      & \ln(x_{22}) & x_{23} \\
+                  \ldots & \ldots      & \ldots \\
+                  1      & \ln(x_{n2}) & x_{n3}
+              \end{pmatrix}, \quad
+              \mathbf{Z} = \begin{pmatrix}
+                  1      & \ln(x^*_{12}) & x_{13}/1000 \\
+                  1      & \ln(x^*_{22}) & x_{23}/1000 \\
+                  \ldots & \ldots        & \ldots      \\
+                  1      & \ln(x^*_{n2}) & x_{n3}/1000
+              \end{pmatrix}
+          \]
 
-            The first columns of $\mathbf{X}$ and $\mathbf{Z}$ are the same. Therefore the first column of $\mathbf{A}$ must be $(1, 0, 0)'$. The second column of $\mathbf{Z}$ is $\ln(x^*_{i2}) = \ln(x_{i2}/1000) = \ln(x_{i2}) - \ln(1000)$, which can be written as a linear combination of the first and second columns of $\mathbf{X}$: $- \ln(1000) \cdot (1, 0, 0)' + 1 \cdot (0, 1, 0)'$. Therefore, the second column of $\mathbf{A}$ must be $(-\ln(1000), 1, 0)'$. The third column of $\mathbf{Z}$ is $x^*_{i3} = x_{i3}/1000$, which can be written as a linear combination of the third column of $\mathbf{X}$: $1/1000 \cdot (0, 0, 1)'$. Therefore, the third column of $\mathbf{A}$ must be $(0, 0, 1/1000)'$. \\
+          \begin{enumerate}
+              \item Show that the columns of $\mathbf{Z}$ can be written as linear combinations of the columns of $\mathbf{X}$, i.e.\ $\mathbf{Z} = \mathbf{XA}$ for some $(3 \times 3)$ matrix $\mathbf{A}$. Find the elements of $\mathbf{A}$.
 
-            Therefore, $\mathbf{A}$ has columns that give the coefficients for each linear combination:
-            $$\mathbf{A} = \begin{pmatrix}
-            1 & -\ln(1000) & 0 \\
-            0 & 1 & 0 \\
-            0 & 0 & 1/1000
-            \end{pmatrix}$$
-            In numerical form, since $\ln(1000) \approxeq 6.90$:
-            $$\mathbf{A} = \begin{pmatrix}
-            1 & -6.90 & 0 \\
-            0 & 1 & 0 \\
-            0 & 0 & 0.001
-            \end{pmatrix}$$
-        }
+                    \answer{
 
-        \item Let $\mathbf{b} = (b_1, b_2, b_3)' = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{y}$ the OLS estimator for $\boldsymbol{\beta}$ and $\mathbf{a} = (a_1, a_2, a_3)' = (\mathbf{Z}'\mathbf{Z})^{-1}\mathbf{Z}'\mathbf{y}$ the OLS estimator for $\boldsymbol{\alpha}$. Show that
-        \begin{enumerate}
-            \item[(i)] $\mathbf{a} = \mathbf{A}^{-1}\mathbf{b}$
-            \answer{
-                We know that $\mathbf{Z} = \mathbf{XA}$, so $\mathbf{Z}'\mathbf{Z} = \mathbf{A}'\mathbf{X}'\mathbf{X}\mathbf{A}$ and $\mathbf{Z}'\mathbf{y} = \mathbf{A}'\mathbf{X}'\mathbf{y}$. Therefore, we can write $\mathbf{a}$ as:
-                \begin{align*}
-                    \mathbf{a} &= (\mathbf{Z}'\mathbf{Z})^{-1}\mathbf{Z}'\mathbf{y} \\
-                    &= (\mathbf{A}'\mathbf{X}'\mathbf{X}\mathbf{A})^{-1}\mathbf{A}'\mathbf{X}'\mathbf{y} \\
-                    &= \mathbf{A}^{-1}(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{y} \\
-                    &= \mathbf{A}^{-1}\mathbf{b}
-                \end{align*}
-            }
-            \item[(ii)] $a_2 = b_2$
-            \answer{
-                From the expression $\mathbf{a} = \mathbf{A}^{-1}\mathbf{b}$, we can see that the second element of $\mathbf{a}$ is equal to the second element of $\mathbf{b}$ because the second column of $\mathbf{A}^{-1}$ has a 1 in the second row and 0s elsewhere. Therefore, $a_2 = b_2$.
-            }
-            \item[(iii)] $a_1 = b_1 + b_2 \ln(1000)$
-            \answer{
-                From the expression $\mathbf{a} = \mathbf{A}^{-1}\mathbf{b}$, we can see that the first element of $\mathbf{a}$ is equal to the first element of $\mathbf{b}$ plus the second element of $\mathbf{b}$ multiplied by $\ln(1000)$ because the first column of $\mathbf{A}^{-1}$ has a 1 in the first row and $-\ln(1000)$ in the second row. Therefore, $a_1 = b_1 + b_2 \ln(1000)$.
-            }
-        \end{enumerate}
-    \end{enumerate}
+                        The first columns of $\mathbf{X}$ and $\mathbf{Z}$ are the same. Therefore the first column of $\mathbf{A}$ must be $(1, 0, 0)'$. The second column of $\mathbf{Z}$ is $\ln(x^*_{i2}) = \ln(x_{i2}/1000) = \ln(x_{i2}) - \ln(1000)$, which can be written as a linear combination of the first and second columns of $\mathbf{X}$: $- \ln(1000) \cdot (1, 0, 0)' + 1 \cdot (0, 1, 0)'$. Therefore, the second column of $\mathbf{A}$ must be $(-\ln(1000), 1, 0)'$. The third column of $\mathbf{Z}$ is $x^*_{i3} = x_{i3}/1000$, which can be written as a linear combination of the third column of $\mathbf{X}$: $1/1000 \cdot (0, 0, 1)'$. Therefore, the third column of $\mathbf{A}$ must be $(0, 0, 1/1000)'$. \\
+
+                        Therefore, $\mathbf{A}$ has columns that give the coefficients for each linear combination:
+                        $$\mathbf{A} = \begin{pmatrix}
+                                1 & -\ln(1000) & 0      \\
+                                0 & 1          & 0      \\
+                                0 & 0          & 1/1000
+                            \end{pmatrix}$$
+                        In numerical form, since $\ln(1000) \approxeq 6.90$:
+                        $$\mathbf{A} = \begin{pmatrix}
+                                1 & -6.90 & 0     \\
+                                0 & 1     & 0     \\
+                                0 & 0     & 0.001
+                            \end{pmatrix}$$
+                    }
+
+              \item Let $\mathbf{b} = (b_1, b_2, b_3)' = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{y}$ the OLS estimator for $\boldsymbol{\beta}$ and $\mathbf{a} = (a_1, a_2, a_3)' = (\mathbf{Z}'\mathbf{Z})^{-1}\mathbf{Z}'\mathbf{y}$ the OLS estimator for $\boldsymbol{\alpha}$. Show that
+                    \begin{enumerate}
+                        \item[(i)] $\mathbf{a} = \mathbf{A}^{-1}\mathbf{b}$
+                              \answer{
+                                  We know that $\mathbf{Z} = \mathbf{XA}$, so $\mathbf{Z}'\mathbf{Z} = \mathbf{A}'\mathbf{X}'\mathbf{X}\mathbf{A}$ and $\mathbf{Z}'\mathbf{y} = \mathbf{A}'\mathbf{X}'\mathbf{y}$. Therefore, we can write $\mathbf{a}$ as:
+                                  \begin{align*}
+                                      \mathbf{a} & = (\mathbf{Z}'\mathbf{Z})^{-1}\mathbf{Z}'\mathbf{y}                                 \\
+                                                 & = (\mathbf{A}'\mathbf{X}'\mathbf{X}\mathbf{A})^{-1}\mathbf{A}'\mathbf{X}'\mathbf{y} \\
+                                                 & = \mathbf{A}^{-1}(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{y}                  \\
+                                                 & = \mathbf{A}^{-1}\mathbf{b}
+                                  \end{align*}
+                              }
+                        \item[(ii)] $a_2 = b_2$
+                              \answer{
+                                  From the expression $\mathbf{a} = \mathbf{A}^{-1}\mathbf{b}$, we can see that the second element of $\mathbf{a}$ is equal to the second element of $\mathbf{b}$ because the second column of $\mathbf{A}^{-1}$ has a 1 in the second row and 0s elsewhere. Therefore, $a_2 = b_2$.
+                              }
+                        \item[(iii)] $a_1 = b_1 + b_2 \ln(1000)$
+                              \answer{
+                                  From the expression $\mathbf{a} = \mathbf{A}^{-1}\mathbf{b}$, we can see that the first element of $\mathbf{a}$ is equal to the first element of $\mathbf{b}$ plus the second element of $\mathbf{b}$ multiplied by $\ln(1000)$ because the first column of $\mathbf{A}^{-1}$ has a 1 in the first row and $-\ln(1000)$ in the second row. Therefore, $a_1 = b_1 + b_2 \ln(1000)$.
+                              }
+                    \end{enumerate}
+          \end{enumerate}
 \end{enumerate}
 
 \end{document}
