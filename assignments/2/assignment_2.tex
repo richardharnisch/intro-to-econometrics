@@ -1,0 +1,155 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\geometry{margin=1in}
+
+\begin{document}
+
+\title{\textit{Introduction to Econometrics}\\Assignment 2}
+\author{Richard Harnisch, s5238366}
+\date{\today}
+\maketitle
+
+% answer environment
+\makeatletter
+\newcommand{\answer}[1]{%
+    \par\medskip
+    \noindent
+    \hspace*{-\@totalleftmargin}%
+    \fbox{%
+        \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{#1}%
+    }%
+    \par\medskip
+}
+\makeatother
+
+\noindent\textit{TeX code available under\\ \url{https://github.com/richardharnisch/intro-to-econometrics}}
+
+\begin{enumerate}
+    \item (3 points) Show that under assumptions 1.1--1.4 of Hayashi (2000), $\text{Cov}(\mathbf{b}, \mathbf{e} | \mathbf{X}) = \mathbf{0}$, where $\mathbf{e} = \mathbf{y} - \mathbf{Xb}$.
+
+          \answer{
+              By definition,
+              \[
+                  \text{Cov}(\mathbf{b}, \mathbf{e} | \mathbf{X}) = \mathbb{E}\{[\mathbf{b} - \mathbb{E}(\mathbf{b}|\mathbf{X})][\mathbf{e} - \mathbb{E}(\mathbf{e}|\mathbf{X})]' | \mathbf{X}\}.
+              \]
+              Under assumptions 1.1--1.4, the OLS estimator is $\mathbf{b} = \boldsymbol{\beta} + (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\boldsymbol{\varepsilon}$, and since $\mathbb{E}(\boldsymbol{\varepsilon}|\mathbf{X}) = \mathbf{0}$ (Assumption 1.2), we have $\mathbb{E}(\mathbf{b}|\mathbf{X}) = \boldsymbol{\beta}$, so
+              \[
+                  \mathbf{b} - \mathbb{E}(\mathbf{b}|\mathbf{X}) = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\boldsymbol{\varepsilon}.
+              \]
+              For the residual vector, $\mathbf{e} = \mathbf{y} - \mathbf{Xb} = \mathbf{M}\mathbf{y} = \mathbf{M}(\mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon}) = \mathbf{M}\boldsymbol{\varepsilon}$, where $\mathbf{M} = \mathbf{I} - \mathbf{X}(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'$ is the annihilator matrix. Since $\mathbb{E}(\boldsymbol{\varepsilon}|\mathbf{X}) = \mathbf{0}$, we have $\mathbb{E}(\mathbf{e}|\mathbf{X}) = \mathbf{M}\mathbb{E}(\boldsymbol{\varepsilon}|\mathbf{X}) = \mathbf{0}$, so
+              \[
+                  \mathbf{e} - \mathbb{E}(\mathbf{e}|\mathbf{X}) = \mathbf{M}\boldsymbol{\varepsilon}.
+              \]
+              Substituting into the covariance formula:
+              \begin{align*}
+                  \text{Cov}(\mathbf{b}, \mathbf{e} | \mathbf{X}) & = \mathbb{E}\{[(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\boldsymbol{\varepsilon}][\mathbf{M}\boldsymbol{\varepsilon}]' | \mathbf{X}\}                                     \\
+                                                                   & = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\,\mathbb{E}(\boldsymbol{\varepsilon}\boldsymbol{\varepsilon}'|\mathbf{X})\,\mathbf{M}'.
+              \end{align*}
+              By Assumption 1.4, $\mathbb{E}(\boldsymbol{\varepsilon}\boldsymbol{\varepsilon}'|\mathbf{X}) = \sigma^2 \mathbf{I}$. Also, $\mathbf{M}' = \mathbf{M}$ (symmetric). Therefore,
+              \begin{align*}
+                  \text{Cov}(\mathbf{b}, \mathbf{e} | \mathbf{X}) & = \sigma^2 (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{M}                                                                                                                \\
+                                                                   & = \sigma^2 (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'[\mathbf{I} - \mathbf{X}(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}']                                                           \\
+                                                                   & = \sigma^2 [(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}' - (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{X}(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}']                              \\
+                                                                   & = \sigma^2 [(\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}' - (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}']                                                                               \\
+                                                                   & = \mathbf{0}.
+              \end{align*}
+          }
+
+    \item (2 points) Consider the standard regression model $\mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon}$. Let $\hat{\boldsymbol{\beta}}$ be any estimator of $\boldsymbol{\beta}$. Let $\mathbf{u} = \hat{\boldsymbol{\beta}} - \mathbb{E}(\hat{\boldsymbol{\beta}}|\mathbf{X})$. Show that $\mathbb{E}[g(\mathbf{X})\mathbf{u}] = \mathbf{0}$ for any function $g(\mathbf{X})$.
+
+          \answer{
+              By the law of iterated expectations,
+              \[
+                  \mathbb{E}[g(\mathbf{X})\mathbf{u}] = \mathbb{E}\!\big[\mathbb{E}[g(\mathbf{X})\mathbf{u} | \mathbf{X}]\big].
+              \]
+              Since $g(\mathbf{X})$ is a function of $\mathbf{X}$ only, it can be pulled out of the inner conditional expectation:
+              \[
+                  \mathbb{E}[g(\mathbf{X})\mathbf{u} | \mathbf{X}] = g(\mathbf{X})\,\mathbb{E}[\mathbf{u} | \mathbf{X}].
+              \]
+              Now, $\mathbb{E}[\mathbf{u} | \mathbf{X}] = \mathbb{E}[\hat{\boldsymbol{\beta}} - \mathbb{E}(\hat{\boldsymbol{\beta}}|\mathbf{X}) | \mathbf{X}] = \mathbb{E}(\hat{\boldsymbol{\beta}}|\mathbf{X}) - \mathbb{E}(\hat{\boldsymbol{\beta}}|\mathbf{X}) = \mathbf{0}$.
+              \\ \\
+              Therefore, $\mathbb{E}[g(\mathbf{X})\mathbf{u}] = \mathbb{E}[g(\mathbf{X}) \cdot \mathbf{0}] = \mathbf{0}$.
+          }
+
+    \item Use the data in DISCRIM.DTA to answer this question.
+
+          \begin{enumerate}
+              \item (1 point) Estimate the model $\text{psoda}_i = \beta_1 + \beta_2 \text{prpblck}_i + \beta_3 \text{income}_i + \varepsilon_i$ by OLS.
+
+                    \answer{
+                        The OLS estimates are ($n = 401$, $R^2 = 0.064$):
+                        \begin{center}
+                            \begin{tabular}{lcccc}
+                                \toprule
+                                Variable & Coefficient & Std.\ Error & $t$-stat & $p$-value \\
+                                \midrule
+                                const    & 0.9563      & 0.019       & 50.354   & 0.000     \\
+                                prpblck  & 0.1150      & 0.026       & 4.423    & 0.000     \\
+                                income   & 1.603e--06  & 3.62e--07   & 4.430    & 0.000     \\
+                                \bottomrule
+                            \end{tabular}
+                        \end{center}
+                        \[
+                            \widehat{\text{psoda}} = 0.9563 + 0.1150 \cdot \text{prpblck} + 0.000\,001\,603 \cdot \text{income}
+                        \]
+                    }
+
+              \item (1 point) Give a meaningful economic interpretation of the constant term.
+
+                    \answer{
+                        The constant term $b_1 = 0.9563$ represents the estimated price of soda (in dollars) in a zip code area with zero percent African American population ($\text{prpblck} = 0$) and zero income ($\text{income} = 0$). Since zero income is not realistic, a more meaningful interpretation is that the constant anchors the regression line: it reflects the baseline soda price before accounting for the effects of racial composition and income. The estimated baseline price of approximately \$0.96 is broadly consistent with observed soda prices in the sample.
+                    }
+
+              \item (1 point) Consider an area with $\text{prpblck} = 0.4$. If the share of African Americans doubles, what is the estimated change in the price of soda?
+
+                    \answer{
+                        If $\text{prpblck}$ doubles from 0.4 to 0.8, the change is $\Delta\text{prpblck} = 0.4$. Since the model is linear, the estimated change in the price of soda is:
+                        \[
+                            \Delta\widehat{\text{psoda}} = b_2 \cdot \Delta\text{prpblck} = 0.1150 \times 0.4 = 0.0460.
+                        \]
+                        So the estimated price of soda increases by approximately \$0.046 (about 4.6 cents).
+                    }
+
+              \item (1 point) Estimate the model $\ln(\text{psoda}_i) = \beta_1 + \beta_2 \text{prpblck}_i + \beta_3 \ln(\text{income}_i) + \varepsilon_i$. What is the income elasticity of the price of soda?
+
+                    \answer{
+                        The OLS estimates are ($n = 401$, $R^2 = 0.068$):
+                        \begin{center}
+                            \begin{tabular}{lcccc}
+                                \toprule
+                                Variable       & Coefficient & Std.\ Error & $t$-stat & $p$-value \\
+                                \midrule
+                                const          & $-0.7938$   & 0.179       & $-4.424$ & 0.000     \\
+                                prpblck        & 0.1216      & 0.026       & 4.722    & 0.000     \\
+                                $\ln$(income)  & 0.0765      & 0.017       & 4.610    & 0.000     \\
+                                \bottomrule
+                            \end{tabular}
+                        \end{center}
+                        Since this is a log-log specification in income, the coefficient on $\ln(\text{income})$ is directly the income elasticity of the price of soda. The estimated income elasticity is $\hat{\beta}_3 = 0.0765$, meaning that a 1\% increase in income is associated with an approximately 0.077\% increase in the price of soda.
+                    }
+
+              \item (1 point) Estimate the model $\text{psoda}_i = \beta_1 + \beta_2 \text{prpblck}_i + \beta_3 \ln(\text{income}_i) + \varepsilon_i$. Provide a careful interpretation of $b_3$.
+
+                    \answer{
+                        The OLS estimates are ($n = 401$, $R^2 = 0.066$):
+                        \begin{center}
+                            \begin{tabular}{lcccc}
+                                \toprule
+                                Variable       & Coefficient & Std.\ Error & $t$-stat & $p$-value \\
+                                \midrule
+                                const          & 0.1855      & 0.188       & 0.987    & 0.324     \\
+                                prpblck        & 0.1258      & 0.027       & 4.665    & 0.000     \\
+                                $\ln$(income)  & 0.0788      & 0.017       & 4.533    & 0.000     \\
+                                \bottomrule
+                            \end{tabular}
+                        \end{center}
+                        This is a level-log specification. The coefficient $b_3 = 0.0788$ means that a 1\% increase in income is associated with an increase in the price of soda of approximately $0.0788 / 100 = 0.000788$ dollars, or about 0.08 cents, holding the proportion of African American population constant.
+                    }
+          \end{enumerate}
+\end{enumerate}
+
+\end{document}
