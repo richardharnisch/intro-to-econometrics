@@ -1,0 +1,190 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\geometry{margin=1in}
+
+\begin{document}
+
+\title{\textit{Introduction to Econometrics}\\Assignment 3}
+\author{Richard Harnisch, s5238366}
+\date{\today}
+\maketitle
+
+% answer environment
+\makeatletter
+\newcommand{\answer}[1]{%
+    \par\medskip
+    \noindent
+    \hspace*{-\@totalleftmargin}%
+    \fbox{%
+        \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{#1}%
+    }%
+    \par\medskip
+}
+\makeatother
+
+\noindent\textit{TeX code available under\\ \url{https://github.com/richardharnisch/intro-to-econometrics}}
+
+\begin{enumerate}
+
+    %% ---------------------------------------------------------------
+    \item (3 points) Model:
+          $\text{voteA}_i = \beta_1 + \beta_2\log(\text{expendA}_i) + \beta_3\log(\text{expendB}_i) + \beta_4\text{prtystrA}_i + \epsilon_i$.
+
+          OLS estimates ($n = 173$, $R^2 = 0.793$):
+
+          \begin{center}
+              \begin{tabular}{lcccc}
+                  \toprule
+                  Variable                 & Coefficient & Std.\ Error & $t$-stat & $p$-value \\
+                  \midrule
+                  const                    & 45.0789     & 3.926       & 11.481   & 0.000     \\
+                  $\log(\text{expendA})$   & 6.0833      & 0.382       & 15.919   & 0.000     \\
+                  $\log(\text{expendB})$   & $-6.6154$   & 0.379       & $-17.463$& 0.000     \\
+                  $\text{prtystrA}$        & 0.1520      & 0.062       & 2.450    & 0.015     \\
+                  \bottomrule
+              \end{tabular}
+          \end{center}
+
+          \begin{enumerate}
+              %% (a)
+              \item Economic interpretation of $\hat{\beta}_2$.
+
+                    \answer{
+                        This is a level-log specification for expendA. The coefficient $\hat{\beta}_2 = 6.0833$ means that a 1\% increase in Candidate A's campaign expenditures is associated with an increase of $6.0833 / 100 \approx 0.061$ percentage points in the vote share of Candidate A, holding Candidate B's expenditures and party strength constant.
+                    }
+
+              %% (b)
+              \item Two-sided $t$-test of $H_0: \beta_2 = 0$ at $\alpha = 0.05$.
+
+                    \answer{
+                        \textbf{Step 1 — Hypotheses.}
+                        \[
+                            H_0: \beta_2 = 0 \qquad H_1: \beta_2 \neq 0.
+                        \]
+
+                        \textbf{Step 2 — Test statistic.} Under $H_0$ the $t$-statistic is
+                        \[
+                            t = \frac{b_2 - 0}{s_{b_2}} = \frac{6.0833}{0.382} \approx 15.92,
+                        \]
+                        which under $H_0$ follows a $t(n - K) = t(169)$ distribution.
+
+                        \textbf{Step 3 — Critical value.} For a two-sided test at $\alpha = 0.05$:
+                        \[
+                            t_{0.025,\,169} \approx 1.974.
+                        \]
+
+                        \textbf{Step 4 — Decision.} Since $|t| = 15.92 \gg 1.974$, we \textbf{reject} $H_0$ at the 5\% level. There is strong evidence that Candidate A's campaign expenditures significantly affect vote share.
+                    }
+
+              %% (c)
+              \item $F$-test for joint significance of $\log(\text{expendA})$ and $\log(\text{expendB})$ at $\alpha = 0.05$.
+
+                    \answer{
+                        \textbf{Hypotheses:} $H_0: \beta_2 = 0,\, \beta_3 = 0$ versus $H_1$: at least one $\neq 0$.
+
+                        The $F$-statistic based on $R^2$ is:
+                        \[
+                            F = \frac{(R^2_U - R^2_R)/q}{(1 - R^2_U)/(n - K)}
+                        \]
+                        where the unrestricted model has $K = 4$ parameters and $q = 2$ restrictions. The restricted model (omitting both expenditure variables) has $R^2_R = 0.1196$.
+
+                        \[
+                            F = \frac{(0.7926 - 0.1196)/2}{(1 - 0.7926)/(173 - 4)} = \frac{0.3365}{0.001226} \approx 274.1
+                        \]
+
+                        The critical value is $F_{0.05}(2, 169) \approx 3.050$.
+
+                        Since $F = 274.1 \gg 3.050$, we \textbf{reject} $H_0$. The two expenditure variables are jointly highly significant.
+                    }
+
+              %% (d)
+              \item $F$-test that a simultaneous 1\% increase in both expenditures has no effect.
+
+                    \answer{
+                        If both $\log(\text{expendA})$ and $\log(\text{expendB})$ each increase by 1\%, the total effect on $\text{voteA}$ is $\beta_2 + \beta_3$. The null hypothesis is therefore:
+                        \[
+                            H_0: \beta_2 + \beta_3 = 0.
+                        \]
+
+                        This is a single linear restriction ($q = 1$). Under $H_0$ we can write $\beta_3 = -\beta_2$, so the restricted model becomes:
+                        \[
+                            \text{voteA}_i = \beta_1 + \beta_2\bigl[\log(\text{expendA}_i) - \log(\text{expendB}_i)\bigr] + \beta_4\,\text{prtystrA}_i + \epsilon_i.
+                        \]
+                        Estimating this restricted model by OLS gives $R^2_R = 0.7920$.
+
+                        \[
+                            F = \frac{(R^2_U - R^2_R)/1}{(1 - R^2_U)/(n - K)} = \frac{(0.7926 - 0.7920)/1}{(1 - 0.7926)/169} \approx 0.996
+                        \]
+
+                        The critical value is $F_{0.05}(1, 169) \approx 3.897$.
+
+                        Since $F = 0.996 < 3.897$, we \textbf{fail to reject} $H_0$. The data are consistent with the hypothesis that a simultaneous 1\% increase in both candidates' expenditures has no net effect on Candidate A's vote share.
+                    }
+          \end{enumerate}
+
+    %% ---------------------------------------------------------------
+    \item (2 points)
+
+          \begin{enumerate}
+              %% (a)
+              \item Two-tailed $t$-test for specification 1, $H_0$: proportion of prior-arrest convictions has no impact ($\beta = 0$), at 5\% and 1\%.
+
+                    \answer{
+                        Specification 1 has $K = 3$ parameters (constant, proportion of convictions, average sentence length), so $df = 200 - 3 = 197$.
+
+                        The $t$-statistic is:
+                        \[
+                            t = \frac{-0.1593}{0.415} \approx -0.384.
+                        \]
+
+                        Critical values for a two-tailed test with $df = 197$:
+                        \begin{itemize}
+                            \item At 5\%: $t_{0.025,\,197} \approx \pm 1.972$.
+                            \item At 1\%: $t_{0.005,\,197} \approx \pm 2.601$.
+                        \end{itemize}
+
+                        Since $|t| = 0.384 < 1.972$, we \textbf{fail to reject} $H_0$ at both the 5\% and 1\% significance levels. There is no statistically significant evidence that the proportion of prior-arrest convictions affects the number of times arrested.
+
+                        \emph{Note:} The large standard error (0.415) relative to the coefficient ($-0.1593$) indicates very imprecise estimation, likely due to a missing variable problem in specification 1.
+                    }
+
+              %% (b)
+              \item $F$-test: income and unemployment duration jointly have no impact.
+
+                    \answer{
+                        \textbf{Hypotheses:} $H_0: \beta_{\text{income}} = 0,\, \beta_{\text{unemp}} = 0$ versus $H_1$: at least one $\neq 0$.
+
+                        Specification 1 is the restricted model ($R^2_R = 0.0062$, $K_R = 3$). Specification 2 is the unrestricted model ($R^2_U = 0.042$, $K_U = 5$), with $q = 2$ additional regressors and $df = 200 - 5 = 195$.
+
+                        \[
+                            F = \frac{(R^2_U - R^2_R)/q}{(1 - R^2_U)/(n - K_U)} = \frac{(0.042 - 0.0062)/2}{(1 - 0.042)/195} = \frac{0.0179}{0.004913} \approx 3.644
+                        \]
+
+                        The critical value is $F_{0.05}(2, 195) \approx 3.042$.
+
+                        Since $F = 3.644 > 3.042$, we \textbf{reject} $H_0$ at the 5\% level. Income and unemployment duration are jointly significant in explaining the number of times arrested.
+                    }
+
+              %% (c)
+              \item 95\% confidence interval for the proportion-of-convictions coefficient in specification 2.
+
+                    \answer{
+                        Specification 2 has $K = 5$ parameters, so $df = 200 - 5 = 195$. The 95\% CI is:
+                        \[
+                            b \pm t_{0.025,\,195} \cdot s_b = -0.1609 \pm 1.972 \times 0.0408.
+                        \]
+                        \[
+                            = [-0.1609 - 0.0805,\ -0.1609 + 0.0805] = [-0.2414,\ -0.0804].
+                        \]
+
+                        We are 95\% confident that the true effect of the proportion of prior-arrest convictions on the number of times arrested lies between $-0.2414$ and $-0.0804$. Since the interval does not contain zero, this coefficient is statistically significant at the 5\% level.
+                    }
+          \end{enumerate}
+
+\end{enumerate}
+
+\end{document}
