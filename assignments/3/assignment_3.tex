@@ -30,7 +30,6 @@
 
 \begin{enumerate}
 
-    %% ---------------------------------------------------------------
     \item (3 points) Model:
           $\text{voteA}_i = \beta_1 + \beta_2\log(\text{expendA}_i) + \beta_3\log(\text{expendB}_i) + \beta_4\text{prtystrA}_i + \epsilon_i$.
 
@@ -39,48 +38,45 @@
           \begin{center}
               \begin{tabular}{lcccc}
                   \toprule
-                  Variable                 & Coefficient & Std.\ Error & $t$-stat & $p$-value \\
+                  Variable               & Coefficient & Std.\ Error & $t$-stat  & $p$-value \\
                   \midrule
-                  const                    & 45.0789     & 3.926       & 11.481   & 0.000     \\
-                  $\log(\text{expendA})$   & 6.0833      & 0.382       & 15.919   & 0.000     \\
-                  $\log(\text{expendB})$   & $-6.6154$   & 0.379       & $-17.463$& 0.000     \\
-                  $\text{prtystrA}$        & 0.1520      & 0.062       & 2.450    & 0.015     \\
+                  const                  & 45.0789     & 3.926       & 11.481    & 0.000     \\
+                  $\log(\text{expendA})$ & 6.0833      & 0.382       & 15.919    & 0.000     \\
+                  $\log(\text{expendB})$ & $-6.6154$   & 0.379       & $-17.463$ & 0.000     \\
+                  $\text{prtystrA}$      & 0.1520      & 0.062       & 2.450     & 0.015     \\
                   \bottomrule
               \end{tabular}
           \end{center}
 
           \begin{enumerate}
-              %% (a)
               \item Economic interpretation of $\hat{\beta}_2$.
 
                     \answer{
                         This is a level-log specification for expendA. The coefficient $\hat{\beta}_2 = 6.0833$ means that a 1\% increase in Candidate A's campaign expenditures is associated with an increase of $6.0833 / 100 \approx 0.061$ percentage points in the vote share of Candidate A, holding Candidate B's expenditures and party strength constant.
                     }
 
-              %% (b)
               \item Two-sided $t$-test of $H_0: \beta_2 = 0$ at $\alpha = 0.05$.
 
                     \answer{
-                        \textbf{Step 1 — Hypotheses.}
+                        \textbf{Step 1: Hypotheses.}
                         \[
                             H_0: \beta_2 = 0 \qquad H_1: \beta_2 \neq 0.
                         \]
 
-                        \textbf{Step 2 — Test statistic.} Under $H_0$ the $t$-statistic is
+                        \textbf{Step 2: Test statistic.} Under $H_0$ the $t$-statistic is
                         \[
                             t = \frac{b_2 - 0}{s_{b_2}} = \frac{6.0833}{0.382} \approx 15.92,
                         \]
                         which under $H_0$ follows a $t(n - K) = t(169)$ distribution.
 
-                        \textbf{Step 3 — Critical value.} For a two-sided test at $\alpha = 0.05$:
+                        \textbf{Step 3: Critical value.} For a two-sided test at $\alpha = 0.05$:
                         \[
                             t_{0.025,\,169} \approx 1.974.
                         \]
 
-                        \textbf{Step 4 — Decision.} Since $|t| = 15.92 \gg 1.974$, we \textbf{reject} $H_0$ at the 5\% level. There is strong evidence that Candidate A's campaign expenditures significantly affect vote share.
+                        \textbf{Step 4: Decision.} Since $|t| = 15.92 \gg 1.974$, we \textbf{reject} $H_0$ at the 5\% level. There is strong evidence that Candidate A's campaign expenditures significantly affect vote share.
                     }
 
-              %% (c)
               \item $F$-test for joint significance of $\log(\text{expendA})$ and $\log(\text{expendB})$ at $\alpha = 0.05$.
 
                     \answer{
@@ -101,7 +97,6 @@
                         Since $F = 274.1 \gg 3.050$, we \textbf{reject} $H_0$. The two expenditure variables are jointly highly significant.
                     }
 
-              %% (d)
               \item $F$-test that a simultaneous 1\% increase in both expenditures has no effect.
 
                     \answer{
@@ -126,11 +121,9 @@
                     }
           \end{enumerate}
 
-    %% ---------------------------------------------------------------
     \item (2 points)
 
           \begin{enumerate}
-              %% (a)
               \item Two-tailed $t$-test for specification 1, $H_0$: proportion of prior-arrest convictions has no impact ($\beta = 0$), at 5\% and 1\%.
 
                     \answer{
@@ -152,7 +145,6 @@
                         \emph{Note:} The large standard error (0.415) relative to the coefficient ($-0.1593$) indicates very imprecise estimation, likely due to a missing variable problem in specification 1.
                     }
 
-              %% (b)
               \item $F$-test: income and unemployment duration jointly have no impact.
 
                     \answer{
@@ -169,19 +161,18 @@
                         Since $F = 3.644 > 3.042$, we \textbf{reject} $H_0$ at the 5\% level. Income and unemployment duration are jointly significant in explaining the number of times arrested.
                     }
 
-              %% (c)
               \item 95\% confidence interval for the proportion-of-convictions coefficient in specification 2.
 
                     \answer{
-                        Specification 2 has $K = 5$ parameters, so $df = 200 - 5 = 195$. The 95\% CI is:
-                        \[
-                            b \pm t_{0.025,\,195} \cdot s_b = -0.1609 \pm 1.972 \times 0.0408.
-                        \]
-                        \[
-                            = [-0.1609 - 0.0805,\ -0.1609 + 0.0805] = [-0.2414,\ -0.0804].
-                        \]
+                    Specification 2 has $K = 5$ parameters, so $df = 200 - 5 = 195$. The 95\% CI is:
+                    \[
+                        b \pm t_{0.025,\,195} \cdot s_b = -0.1609 \pm 1.972 \times 0.0408.
+                    \]
+                    \[
+                        = [-0.1609 - 0.0805,\ -0.1609 + 0.0805] = [-0.2414,\ -0.0804].
+                    \]
 
-                        We are 95\% confident that the true effect of the proportion of prior-arrest convictions on the number of times arrested lies between $-0.2414$ and $-0.0804$. Since the interval does not contain zero, this coefficient is statistically significant at the 5\% level.
+                    We are 95\% confident that the true effect of the proportion of prior-arrest convictions on the number of times arrested lies between $-0.2414$ and $-0.0804$. Since the interval does not contain zero, this coefficient is statistically significant at the 5\% level.
                     }
           \end{enumerate}
 
