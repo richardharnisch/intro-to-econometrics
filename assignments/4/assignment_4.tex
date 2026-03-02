@@ -1,0 +1,366 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{xcolor}
+\geometry{margin=1in}
+
+\lstdefinestyle{stata}{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+}
+
+\begin{document}
+
+\title{\textit{Introduction to Econometrics}\\Assignment 4}
+\author{Richard Harnisch, s5238366}
+\date{\today}
+\maketitle
+
+% answer environment
+\makeatletter
+\newcommand{\answer}[1]{%
+    \par\medskip
+    \noindent
+    \hspace*{-\@totalleftmargin}%
+    \fbox{%
+        \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{#1}%
+    }%
+    \par\medskip
+}
+\makeatother
+
+\noindent\textit{TeX code available under\\ \url{https://github.com/richardharnisch/intro-to-econometrics}}
+
+\begin{enumerate}
+
+    \item Let $\{z_i\}$ be an i.i.d.\ sequence with $E(z_i) = \alpha$ and $\mathrm{Var}(z_i) = \sigma^2$.
+
+          \begin{enumerate}
+
+              \item Derive $\mathrm{Var}\!\left(\sqrt{n}\,(\bar{z}_n - \alpha)\right)$.
+
+                    \answer{
+                        Since $\bar{z}_n = \frac{1}{n}\sum_{i=1}^n z_i$, we have
+                        $\mathrm{Var}(\bar{z}_n) = \frac{1}{n^2}\sum_{i=1}^n \mathrm{Var}(z_i) = \frac{\sigma^2}{n}$,
+                        where the second equality uses the i.i.d.\ assumption.
+                        Therefore:
+                        \[
+                            \mathrm{Var}\!\left(\sqrt{n}\,(\bar{z}_n - \alpha)\right)
+                            = n\,\mathrm{Var}(\bar{z}_n - \alpha)
+                            = n\,\mathrm{Var}(\bar{z}_n)
+                            = n \cdot \frac{\sigma^2}{n} = \sigma^2.
+                        \]
+                    }
+
+              \item What is the asymptotic variance of $\bar{z}_n$? How does it compare with
+                    $\mathrm{Var}\!\left(\sqrt{n}\,(\bar{z}_n - \alpha)\right)$?
+
+                    \answer{
+                        By the Central Limit Theorem (CLT), under the assumption that
+                        $\sigma^2 < \infty$:
+                        \[
+                            \sqrt{n}\,(\bar{z}_n - \alpha) \xrightarrow{d} N(0, \sigma^2).
+                        \]
+                        The \emph{asymptotic variance} of $\bar{z}_n$, denoted $\mathrm{Avar}(\bar{z}_n)$,
+                        is defined as the variance of this limiting distribution, i.e.\
+                        $\mathrm{Avar}(\bar{z}_n) = \sigma^2$.
+
+                        Comparing with part (a): the asymptotic variance $\sigma^2$ equals
+                        $\mathrm{Var}\!\left(\sqrt{n}\,(\bar{z}_n - \alpha)\right) = \sigma^2$
+                        exactly, and this holds for every $n$.
+                        This is not a coincidence: for the sample mean of i.i.d.\ observations,
+                        the exact finite-sample variance of $\sqrt{n}\,(\bar{z}_n - \alpha)$ is
+                        already constant in $n$, so no approximation is needed.
+                    }
+
+              \item Based on asymptotic theory, how would you compute the standard error
+                    used to construct 95\% confidence intervals or test statistics? Why is
+                    it consistent?
+
+                    \answer{
+                        The standard error of $\bar{z}_n$ is
+                        $\mathrm{SE}(\bar{z}_n) = \sqrt{\sigma^2/n} = \sigma/\sqrt{n}$.
+                        Since $\sigma^2$ is unknown, we replace it with the sample variance
+                        \[
+                            s^2 = \frac{1}{n-1}\sum_{i=1}^n (z_i - \bar{z}_n)^2,
+                        \]
+                        giving the estimated standard error $\widehat{\mathrm{SE}} = s/\sqrt{n}$.
+
+                        \textbf{Consistency.} By the Law of Large Numbers (LLN) applied to the
+                        i.i.d.\ sequence $(z_i - \alpha)^2$ (which requires
+                        $E[(z_i-\alpha)^2] = \sigma^2 < \infty$), we have
+                        $s^2 \xrightarrow{p} \sigma^2$.
+                        Since $g(x) = \sqrt{x/n}$ is continuous, the Continuous Mapping Theorem
+                        (CMT) gives
+                        $\widehat{\mathrm{SE}} = s/\sqrt{n} \xrightarrow{p} \sigma/\sqrt{n} = \mathrm{SE}(\bar{z}_n)$,
+                        so the estimated standard error is consistent.
+                    }
+
+          \end{enumerate}
+
+    \item Let $\hat{\alpha}$ and $\hat{\beta}$ be $\sqrt{n}$-asymptotically normal estimators for
+          $\alpha > 0$ and $\beta > 0$ respectively. What would be a consistent estimator for
+          $\delta = \log(\alpha/\beta)$?
+
+          \answer{
+              A consistent estimator is
+              \[
+                  \hat{\delta} = \log\!\left(\hat{\alpha}/\hat{\beta}\right)
+                  = \log\hat{\alpha} - \log\hat{\beta}.
+              \]
+
+              \textbf{Why it is consistent.}
+              Since $\hat{\alpha}$ and $\hat{\beta}$ are $\sqrt{n}$-asymptotically normal, they are
+              consistent: $\hat{\alpha} \xrightarrow{p} \alpha > 0$ and
+              $\hat{\beta} \xrightarrow{p} \beta > 0$.
+              The function $g(a, b) = \log(a/b)$ is continuous on the domain
+              $\{(a,b): a > 0,\, b > 0\}$, which contains the limit point $(\alpha, \beta)$.
+              By the CMT:
+              \[
+                  \hat{\delta} = g(\hat{\alpha}, \hat{\beta}) \xrightarrow{p}
+                  g(\alpha, \beta) = \log(\alpha/\beta) = \delta.
+              \]
+          }
+
+    \item Consider the model $y_i = x_i\beta + \epsilon_i$ with $E(\epsilon_i \mid x_i) = 0$,
+          $x_i \in \mathbb{R}$, and i.i.d.\ observations, and the two estimators from Exercise 2
+          of the Week 4 tutorial:
+          \[
+              \hat{\beta} = \frac{\sum_{i=1}^n x_i y_i}{\sum_{i=1}^n x_i^2}, \qquad
+              \tilde{\beta} = \frac{1}{n}\sum_{i=1}^n \frac{y_i}{x_i}.
+          \]
+
+          \begin{enumerate}[(i)]
+              \item \textbf{Estimator $\hat{\beta}$.}
+
+                    \answer{
+                        \textbf{Reformulation.} Substituting $y_i = x_i\beta + \epsilon_i$:
+                        \[
+                            \hat{\beta} = \beta
+                            + \frac{\frac{1}{n}\sum_{i=1}^n x_i \epsilon_i}
+                            {\frac{1}{n}\sum_{i=1}^n x_i^2},
+                        \]
+                        so $\sqrt{n}(\hat{\beta} - \beta)
+                            = \dfrac{\frac{1}{\sqrt{n}}\sum_{i=1}^n x_i\epsilon_i}
+                            {\frac{1}{n}\sum_{i=1}^n x_i^2}$.
+
+                        \textbf{Additional moment condition.}
+                        The consistency proof used $E[x_i^2] < \infty$ (LLN on denominator) and
+                        $E[|x_i \epsilon_i|] < \infty$ (LLN on numerator).
+                        To apply the CLT to $\{x_i \epsilon_i\}$, we additionally require
+                        \[
+                            E\!\left[x_i^2\,\epsilon_i^2\right] < \infty.
+                        \]
+                        This ensures $\mathrm{Var}(x_i\epsilon_i) = E[x_i^2\epsilon_i^2] - (E[x_i\epsilon_i])^2
+                            = E[x_i^2\epsilon_i^2]$ is finite (using $E[x_i\epsilon_i]=0$).
+
+                        \textbf{Asymptotic distribution.}
+                        Denote $\mu_2 = E[x_i^2] \neq 0$ and
+                        $\sigma_{x\epsilon}^2 = E[x_i^2\epsilon_i^2]$.
+                        By the CLT:
+                        \[
+                            \frac{1}{\sqrt{n}}\sum_{i=1}^n x_i\epsilon_i
+                            \xrightarrow{d} N\!\left(0,\, \sigma_{x\epsilon}^2\right).
+                        \]
+                        Since $\frac{1}{n}\sum x_i^2 \xrightarrow{p} \mu_2$ by the LLN,
+                        Slutsky's theorem gives:
+                        \[
+                            \sqrt{n}\,(\hat{\beta} - \beta)
+                            \xrightarrow{d} N\!\!\left(0,\;
+                            \frac{E\!\left[x_i^2\epsilon_i^2\right]}{\left(E\!\left[x_i^2\right]\right)^2}
+                            \right).
+                        \]
+                    }
+
+              \item \textbf{Estimator $\tilde{\beta}$.}
+
+                    \answer{
+                    \textbf{Reformulation.} Substituting $y_i = x_i\beta + \epsilon_i$:
+                    \[
+                        \tilde{\beta} = \beta + \frac{1}{n}\sum_{i=1}^n \frac{\epsilon_i}{x_i},
+                    \]
+                    so $\sqrt{n}(\tilde{\beta} - \beta) = \dfrac{1}{\sqrt{n}}\sum_{i=1}^n
+                        \dfrac{\epsilon_i}{x_i}$.
+
+                    \textbf{Additional moment condition.}
+                    The consistency proof used $P(x_i = 0) = 0$ and
+                    $E[|\epsilon_i/x_i|] < \infty$ (LLN on the sum). To apply the CLT to
+                    $\{\epsilon_i/x_i\}$, we additionally require
+                    \[
+                        E\!\left[\frac{\epsilon_i^2}{x_i^2}\right] < \infty.
+                    \]
+                    This ensures $\mathrm{Var}(\epsilon_i/x_i) = E[\epsilon_i^2/x_i^2]$
+                    is finite (using $E[\epsilon_i/x_i] = E[(1/x_i)\,E[\epsilon_i \mid x_i]] = 0$
+                    by the Law of Iterated Expectations).
+
+                    \textbf{Asymptotic distribution.}
+                    By the CLT:
+                    \[
+                        \sqrt{n}\,(\tilde{\beta} - \beta)
+                        \xrightarrow{d} N\!\!\left(0,\;
+                        E\!\left[\frac{\epsilon_i^2}{x_i^2}\right]
+                        \right).
+                    \]
+                    }
+
+          \end{enumerate}
+
+    \item Consider the OLS regression:
+          \[
+              \log \mathrm{wage}_i = \beta_1\,\mathrm{education}_i
+              + \beta_2\,\mathrm{experience}_i
+              + \beta_3\,\frac{\mathrm{experience}_i^2}{100}
+              + \beta_4 + \varepsilon_i.
+          \]
+
+          \begin{enumerate}
+
+              \item How would you interpret $\beta_1$?
+
+                    \answer{
+                        Since the dependent variable is $\log\mathrm{wage}$, $\beta_1$ is the
+                        causal effect of one additional year of education on log wages, holding
+                        experience constant.
+                        In percentage terms, an additional year of education is associated with
+                        an approximate $100\beta_1\%$ increase in wages.
+                        With the estimated value $b_1 = 0.118$, one extra year of education
+                        raises wages by approximately $11.8\%$.
+                    }
+
+              \item What is the marginal impact of experience on log wages?
+
+                    \answer{
+                        Differentiating the model with respect to experience:
+                        \[
+                            \frac{\partial \log\mathrm{wage}_i}{\partial\,\mathrm{experience}_i}
+                            = \beta_2 + \frac{2\beta_3}{100}\,\mathrm{experience}_i
+                            = \beta_2 + \frac{\beta_3}{50}\,\mathrm{experience}_i.
+                        \]
+                        This is a non-constant marginal effect that depends on the level of
+                        experience. With $b_2 = 0.016 > 0$ and $b_3 = -0.022 < 0$, the
+                        marginal return to experience is positive but decreasing (concave in
+                        experience). Multiplied by 100, it gives the approximate percentage
+                        increase in wages per additional year of experience at a given level.
+                    }
+
+              \item $\theta = 100\beta_2 + 20\beta_3$ measures the percentage return to
+                    experience for individuals with $X$ years. What is $X$?
+
+                    \answer{
+                        The percentage return to experience at $X$ years is
+                        $100 \times \left(\beta_2 + \dfrac{2\beta_3}{100}\,X\right)
+                            = 100\beta_2 + 2\beta_3\,X$.
+
+                        Setting this equal to $\theta = 100\beta_2 + 20\beta_3$:
+                        \[
+                            2\beta_3\,X = 20\beta_3
+                            \implies X = 10.
+                        \]
+                        So $\theta$ measures the percentage return to experience for individuals
+                        with \textbf{10 years} of experience.
+                    }
+
+              \item Standard errors and test of returns to education.
+
+                    \answer{
+                        The standard errors are $\mathrm{SE}(b_j) = \sqrt{\hat{V}_\beta[j,j]}$
+                        where $\hat{V}_\beta[j,j]$ are the diagonal entries of $\hat{V}_\beta$
+                        (in units of $10^{-4}$):
+                        \begin{center}
+                            \begin{tabular}{lcc}
+                                \toprule
+                                Parameter & $\hat{V}_\beta[j,j]$   & $\mathrm{SE}(b_j)$                            \\
+                                \midrule
+                                $b_1$     & $0.632 \times 10^{-4}$ & $\sqrt{0.632 \times 10^{-4}} \approx 0.00795$ \\
+                                $b_2$     & $0.390 \times 10^{-4}$ & $\sqrt{0.390 \times 10^{-4}} \approx 0.00625$ \\
+                                $b_3$     & $1.48  \times 10^{-4}$ & $\sqrt{1.48  \times 10^{-4}} \approx 0.01217$ \\
+                                $b_4$     & $246   \times 10^{-4}$ & $\sqrt{246   \times 10^{-4}} \approx 0.15684$ \\
+                                \bottomrule
+                            \end{tabular}
+                        \end{center}
+
+                        \textbf{Test: $H_0$: $\beta_1 = 0.10$ vs.\ $H_1$: $\beta_1 \neq 0.10$
+                            at $\alpha = 5\%$.}
+
+                        Under $H_0$, the asymptotic $t$-statistic is:
+                        \[
+                            t = \frac{b_1 - 0.10}{\mathrm{SE}(b_1)}
+                            = \frac{0.118 - 0.10}{0.00795}
+                            \approx 2.264.
+                        \]
+                        For large $n$, $t \xrightarrow{d} N(0,1)$ under $H_0$, so we compare
+                        to the critical value $z_{0.025} \approx 1.960$.
+                        Since $|t| = 2.264 > 1.960$, we \textbf{reject} $H_0$ at the 5\% level.
+                        The data suggest that the returns to education are significantly
+                        different from 10\%.
+                    }
+
+              \item Test whether $\theta = 100\beta_2 + 20\beta_3$ is different from 0.
+
+                    We test $H_0: R\beta = r$ with $R = (0,\, 100,\, 20,\, 0)$ and $r = 0$
+                    ($\#r = 1$ restriction). Since
+                    $\hat{V}_\beta = \frac{1}{n}\widehat{\mathrm{Avar}}(b)$,
+                    the test statistic simplifies to
+                    \[
+                        W = (Rb - r)^\prime
+                        \bigl(R\hat{V}_\beta R^\prime\bigr)^{-1}
+                        (Rb - r)
+                        \xrightarrow{d} \chi^2(1).
+                    \]
+
+                    \textbf{Stata code:}
+
+                    \begin{lstlisting}[style=stata]
+* Coefficient vector (column)
+matrix b = (0.118 \ 0.016 \ -0.022 \ 0.947)
+
+* V_hat_beta (entries * 1e-4)
+matrix Vbeta = (0.0000632,  0.0000131, -0.0000143, -0.00111   ///
+               \ 0.0000131,  0.0000390, -0.0000731, -0.000625  ///
+               \ -0.0000143, -0.0000731,  0.000148,  0.000943  ///
+               \ -0.00111,   -0.000625,   0.000943,  0.0246)
+
+* R row vector: theta = 100*beta2 + 20*beta3
+matrix R = (0, 100, 20, 0)
+
+* Rb (r = 0)
+matrix diff = R * b
+matlist diff
+
+* R * Vbeta * R'
+matrix RVR = R * Vbeta * R'
+matlist RVR
+
+* Wald statistic
+matrix W = diff' * inv(RVR) * diff
+display W[1,1]
+
+* p-value and 5% critical value
+display 1 - chi2(1, W[1,1])
+display invchi2(1, 0.95)
+                    \end{lstlisting}
+
+                    \answer{
+                        $Rb - r = 100(0.016) + 20(-0.022) = 1.16$ and
+                        $R\hat{V}_\beta R' = 100^2(0.390) + 2(100)(20)(-0.731) + 20^2(1.48)
+                            = 1568$ (all $\times 10^{-4}$) $= 0.1568$.
+                        Thus $W = 1.16^2/0.1568 \approx 8.582$, which exceeds the 95th
+                        percentile of $\chi^2(1) \approx 3.841$. We \textbf{reject} $H_0$
+                        at the 5\% level: the percentage return to experience at 10 years
+                        is significantly different from zero.
+                    }
+
+          \end{enumerate}
+
+\end{enumerate}
+
+\end{document}
