@@ -1,0 +1,165 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\geometry{margin=1in}
+
+\begin{document}
+
+\title{\textit{Introduction to Econometrics}\\Assignment 5}
+\author{Richard Harnisch, s5238366}
+\date{\today}
+\maketitle
+
+% answer environment
+\makeatletter
+\newcommand{\answer}[1]{%
+    \par\medskip
+    \noindent
+    \hspace*{-\@totalleftmargin}%
+    \fbox{%
+        \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{#1}%
+    }%
+    \par\medskip
+}
+\makeatother
+
+\noindent\textit{TeX code available under\\ \url{https://github.com/richardharnisch/intro-to-econometrics}}
+
+\begin{enumerate}
+
+    \item Consider the model $y_i = \beta z_i + e_i$ where $z_i$ is a scalar and
+          $E(z_i e_i) \neq 0$.  The dummy variable $D_i \in \{0,1\}$ satisfies
+          $E(z_i D_i) \neq 0$.
+
+          \begin{enumerate}
+
+              \item What condition must $D_i$ satisfy with respect to $e_i$ to be a valid
+                    instrument?
+
+                    \answer{
+                        $D_i$ must satisfy the \textbf{exogeneity} (exclusion restriction)
+                        condition:
+                        \[
+                            E(D_i e_i) = 0.
+                        \]
+                        Together with the relevance condition $E(z_i D_i) \neq 0$ already given,
+                        this makes $D_i$ a valid instrument for $z_i$.
+                    }
+
+              \item Using this condition, express $\beta$ as a function of
+                    $E(D_i y_i)$ and $E(D_i z_i)$.
+
+                    \answer{
+                        Start from the model $y_i = \beta z_i + e_i$.  Multiply both sides by
+                        $D_i$ and take expectations:
+                        \[
+                            E(D_i y_i) = \beta\, E(D_i z_i) + E(D_i e_i).
+                        \]
+                        Applying the exogeneity condition $E(D_i e_i) = 0$:
+                        \[
+                            E(D_i y_i) = \beta\, E(D_i z_i).
+                        \]
+                        Since $E(D_i z_i) \neq 0$ (relevance), we can solve for $\beta$:
+                        \[
+                            \beta = \frac{E(D_i y_i)}{E(D_i z_i)}.
+                        \]
+                    }
+
+              \item Show that this expression can be rewritten solely as a function of
+                    $E(y_i \mid D_i = 1)$ and $E(z_i \mid D_i = 1)$.
+
+                    \answer{
+                        Since $D_i \in \{0,1\}$, the Law of Total Expectation gives
+                        \[
+                            E(D_i y_i)
+                            = E(D_i y_i \mid D_i=1)\,P(D_i=1)
+                            + E(D_i y_i \mid D_i=0)\,P(D_i=0).
+                        \]
+                        When $D_i=1$ the product $D_i y_i = y_i$; when $D_i=0$ the product is
+                        zero.  Therefore:
+                        \[
+                            E(D_i y_i) = E(y_i \mid D_i=1)\cdot P(D_i=1).
+                        \]
+                        Identically for the denominator:
+                        \[
+                            E(D_i z_i) = E(z_i \mid D_i=1)\cdot P(D_i=1).
+                        \]
+                        Substituting into the expression from (b), the factor $P(D_i=1) > 0$
+                        cancels (it is positive because $E(D_i z_i) \neq 0$ requires
+                        $P(D_i=1) \neq 0$):
+                        \[
+                            \beta
+                            = \frac{E(y_i \mid D_i=1)\cdot P(D_i=1)}
+                            {E(z_i \mid D_i=1)\cdot P(D_i=1)}
+                            = \frac{E(y_i \mid D_i = 1)}{E(z_i \mid D_i = 1)}.
+                        \]
+                    }
+
+          \end{enumerate}
+
+    \item We want to estimate the causal effect of receiving disability insurance (DI)
+          benefits on hours worked.
+
+          \begin{enumerate}
+
+              \item What concern would you have about estimating
+                    $\text{hours worked}_i = \beta_0 + \beta_1 DI_i + \varepsilon_i$
+                    by OLS?  How would the estimated $\hat{\beta}_1$ compare to the true
+                    causal effect?
+
+                    \answer{
+                        \textbf{Endogeneity / selection bias.}  The indicator $DI_i$ is not
+                        randomly assigned: individuals with more severe disabilities or worse
+                        underlying health are both (i) more likely to receive DI benefits
+                        ($DI_i = 1$) and (ii) less likely to work regardless of DI receipt.
+                        Unobserved health severity is therefore captured in the error
+                        $\varepsilon_i$, and it is negatively correlated with hours worked
+                        while positively correlated with $DI_i$.  Formally,
+                        $\mathrm{Cov}(DI_i, \varepsilon_i) < 0$, so OLS is inconsistent.
+
+                        The OLS estimator conflates the causal effect of DI with the pre-existing
+                        lower work capacity of DI recipients.  Consequently $\hat{\beta}_1$ will
+                        be \textbf{more negative} (larger in absolute value) than the true causal
+                        effect: OLS overestimates how much DI benefits reduce hours worked.
+                    }
+
+              \item Propose a variable and an estimator that could consistently estimate the
+                    causal effect of DI benefits on hours worked.  Justify your answer.
+
+                    \answer{
+                        \textbf{Instrument.}  Use a measure of \emph{judge leniency}, e.g.\
+                        the historical DI-application acceptance rate of the judge assigned to
+                        individual $i$.
+
+                        \textbf{Estimator.}  Instrumental Variables (IV), or equivalently
+                        Two-Stage Least Squares (2SLS).
+
+                        \textbf{Justification.}
+                        \begin{itemize}
+                            \item \textit{Relevance}: Judges differ greatly in acceptance rates,
+                                  so a more lenient judge directly raises the probability that
+                                  individual $i$ receives DI benefits.  The first-stage
+                                  correlation $E(\text{leniency}_i \cdot DI_i) \neq 0$ is
+                                  satisfied.
+
+                            \item \textit{Exogeneity / exclusion restriction}: DI applications
+                                  are randomly allocated to judges, so the assigned judge is
+                                  independent of the applicant's health severity, earning
+                                  capacity, and all other determinants of hours worked.  Judge
+                                  leniency therefore affects hours worked \emph{only through}
+                                  the DI-receipt decision, i.e.\
+                                  $E(\text{leniency}_i \cdot \varepsilon_i) = 0$.
+                        \end{itemize}
+                        Because both conditions hold, IV/2SLS using judge leniency as an
+                        instrument consistently estimates the causal effect $\beta_1$.
+                    }
+
+          \end{enumerate}
+
+\end{enumerate}
+
+\end{document}
