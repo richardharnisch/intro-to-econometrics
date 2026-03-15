@@ -1,0 +1,209 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{xcolor}
+\geometry{margin=1in}
+
+\lstdefinestyle{python}{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+}
+
+\begin{document}
+
+\title{\textit{Introduction to Econometrics}\\Assignment 6}
+\author{Richard Harnisch, s5238366}
+\date{\today}
+\maketitle
+
+% answer environment
+\makeatletter
+\newcommand{\answer}[1]{%
+    \par\medskip
+    \noindent
+    \hspace*{-\@totalleftmargin}%
+    \fbox{%
+        \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{#1}%
+    }%
+    \par\medskip
+}
+\makeatother
+
+\noindent\textit{TeX code available under\\ \url{https://github.com/richardharnisch/intro-to-econometrics}}
+
+\begin{enumerate}
+
+    \item Consider the model $y_1 = \mathbf{x}_1\delta_1 + \alpha_1 y_2 + \gamma q + \varepsilon_1$
+          where $q$ is omitted. Assume $E(\varepsilon_1 \mid \mathbf{x}_1, y_2, q) = 0$,
+          $E(q \mid \mathbf{x}_1) = 0$, but $y_2$ and $q$ are correlated.
+          Let $\mathbf{x}_2$ be instruments for $y_2$ with relevance and
+          $E(\varepsilon_1 \mid \mathbf{x}_2) = 0$, yet $\mathbf{x}_2$ may be
+          correlated with $q$.
+
+          Would OLS and IV be consistent if $y_2$ and $\mathbf{x}_2$ are
+          correlated with $q$?
+
+          \answer{
+              Neither OLS nor IV would be consistent.
+
+              For OLS, the estimated model is $y_1 = \mathbf{x}_1\delta_1 + \alpha_1 y_2 + u$
+              where $u = \gamma q + \varepsilon_1$ (the error absorbs the omitted $q$). Since
+              $\text{Cov}(y_2, q) \neq 0$ and $\gamma \neq 0$, we have
+              $\text{Cov}(y_2, u) = \gamma\text{Cov}(y_2, q) \neq 0$,
+              so $\hat{\alpha}_1^{\text{OLS}} \xrightarrow{p} \alpha_1 + \text{bias} \neq \alpha_1$.
+
+              For IV to be consistent we require $E(\mathbf{x}_2 u) = 0$, i.e.
+              \[
+                  E(\mathbf{x}_2 [\gamma q + \varepsilon_1]) = 0.
+              \]
+              We are given $E(\mathbf{x}_2 \varepsilon_1) = 0$, but if $\mathbf{x}_2$ is
+              correlated with $q$ then $E(\mathbf{x}_2 q) \neq 0$, which means
+              $E(\mathbf{x}_2 \gamma q) \neq 0$. The exclusion restriction is therefore
+              violated and IV is also inconsistent. The root cause is that $q$ is omitted
+              and $\mathbf{x}_2$ is not orthogonal to it; controlling for $q$ or finding
+              instruments that satisfy the exclusion restriction with respect to $q$ would
+              be required for consistency.
+          }
+
+    \item We estimate returns to education using the AK1991 dataset.
+
+          \begin{enumerate}
+
+              \item (1 point) Write the model to estimate returns to education.
+
+                    \answer{
+                        \[
+                            \log(\text{wage}_i) = \beta_0 + \beta_1 \text{education}_i
+                            + \beta_2 \text{married}_i + \beta_3 \text{black}_i
+                            + \beta_4 \text{smsa}_i
+                            + \sum_{s=2}^{50} \gamma_s \text{state}_{s,i}
+                            + \sum_{y=1931}^{1939} \delta_y \text{yob}_{y,i} + \varepsilon_i
+                        \]
+                        Here $\text{wage}_i$ denotes weekly wages, $\text{education}_i$ years of
+                        education, $\text{married}_i$ and $\text{black}_i$ are binary indicators,
+                        and $\text{smsa}_i$ indicates residence in a Standard Metropolitan
+                        Statistical Area. The model includes a full set of state indicators
+                        (49 dummies, state 1 omitted) and a full set of year-of-birth indicators
+                        (9 dummies, 1930 omitted). The parameter of interest is $\beta_1$,
+                        the return to one additional year of education.
+                    }
+
+              \item (1 point) What is the potential issue with OLS?
+
+                    \answer{
+                        The main concern is endogeneity caused by omitted ability. Unobserved
+                        ability (intelligence, motivation, etc.) affects both how much education
+                        an individual acquires and how much they earn, so it is absorbed into
+                        the error term $\varepsilon_i$. Because higher-ability individuals tend
+                        to acquire more education and earn higher wages,
+                        $\text{Cov}(\text{education}_i, \varepsilon_i) > 0$. This means
+                        $\hat{\beta}_1^{\text{OLS}}$ is biased upward: it conflates the causal
+                        effect of education with the effect of ability, and is therefore not a
+                        consistent estimator of the return to education.
+                    }
+
+              \item (2 points) Is education related to quarter of birth?
+                    Could QOB be used as instrument?
+
+                    \answer{
+                        Yes, education is significantly related to quarter of birth. The
+                        first-stage regression regresses years of education on the QOB dummies
+                        and all controls from the main equation (married, black, smsa, full
+                        state dummies, full year-of-birth dummies). The results are:
+
+                        \begin{center}
+                            \begin{tabular}{lccc}
+                                \toprule
+                                QOB & Coefficient & SE & t-statistic \\
+                                \midrule
+                                QOB=2 & 0.0457 & 0.0157 & 2.913 \\
+                                QOB=3 & 0.0982 & 0.0154 & 6.390 \\
+                                QOB=4 & 0.1454 & 0.0156 & 9.295 \\
+                                \midrule
+                                \multicolumn{4}{c}{F-test for joint significance: $F_{(3,329443)} = 32.65$, $p < 0.001$} \\
+                                \bottomrule
+                            \end{tabular}
+                        \end{center}
+
+                        The pattern is explained by compulsory schooling laws, which require
+                        students to remain in school until age 16 or 17. Since school entry
+                        occurs in September, children born in the first quarter are the youngest
+                        in their cohort. When they reach the compulsory leaving age they have
+                        completed fewer years of schooling than children born later in the year,
+                        creating exogenous variation in education by quarter of birth.
+
+                        Quarter of birth is a valid instrument. The relevance condition is
+                        satisfied: the first-stage F-statistic of 32.65 far exceeds the
+                        conventional threshold of 10, indicating a strong relationship between
+                        QOB and education. The exogeneity condition is also plausibly satisfied:
+                        season of birth is determined at conception, beyond individual control,
+                        and is unlikely to be related to ability, family background, or other
+                        determinants of wages except through its effect on years of schooling.
+                    }
+
+              \item (3 points) Perform a fully-fledged IV analysis with tests.
+
+                    \answer{
+                        The table below compares OLS and 2SLS estimates of the return to
+                        education, using QOB dummies as instruments.
+
+                        \begin{center}
+                            \begin{tabular}{lrr}
+                                \toprule
+                                & OLS & 2SLS \\
+                                \midrule
+                                Education (return/year) & 0.0625 & 0.0968 \\
+                                Standard Error & 0.0003 & 0.0209 \\
+                                t-statistic & 182.06 & 4.64 \\
+                                p-value & $<$0.0001 & $<$0.0001 \\
+                                \midrule
+                                \multicolumn{3}{c}{95\% CI for 2SLS: $[0.0559,\ 0.1378]$} \\
+                                \bottomrule
+                            \end{tabular}
+                        \end{center}
+
+                        According to 2SLS, one additional year of education increases weekly
+                        wages by approximately 9.68\%, compared to 6.25\% under OLS. The
+                        higher IV estimate is consistent with classical measurement error in
+                        education attenuating the OLS coefficient toward zero, or with the IV
+                        recovering a local average treatment effect for compliers whose
+                        education is affected by compulsory schooling laws and who may face
+                        higher marginal returns than average.
+
+                        Three diagnostic tests were performed. First, the first-stage
+                        F-statistic of 32.65 comfortably exceeds 10, so there is no weak
+                        instrument problem. Second, the Hausman test for endogeneity
+                        ($H_0$: education is exogenous) yields $t = 1.643$ with $p = 0.100$,
+                        so we fail to reject exogeneity at the 5\% level; the difference
+                        between OLS and 2SLS is not statistically significant, though this
+                        does not rule out endogeneity. Third, the Sargan test for
+                        overidentifying restrictions uses the fact that with 3 instruments
+                        for 1 endogenous variable there are $L - K = 3 - 1 = 2$
+                        overidentifying restrictions. The test statistic is 2.244,
+                        well below the 5\% critical value $\chi^2_{2,0.05} = 5.991$
+                        ($p = 0.523$), so we cannot reject the hypothesis that all
+                        exclusion restrictions hold.
+
+                        In conclusion, the IV estimate of 9.68\% return per year of education
+                        is statistically significant, rests on a strong first stage, and is
+                        supported by the Sargan test. Although the Hausman test does not
+                        conclusively establish endogeneity, the IV approach is motivated by
+                        the institutional setting in which compulsory schooling laws generate
+                        plausibly exogenous variation in years of schooling.
+                    }
+
+          \end{enumerate}
+
+\end{enumerate}
+
+\end{document}
