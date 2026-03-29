@@ -1,0 +1,358 @@
+\documentclass[9pt,a4paper]{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{array}
+
+\titleformat{\section}{\normalfont\bfseries\large}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalfont\bfseries}{}{0em}{}
+\titlespacing{\section}{0pt}{6pt}{3pt}
+\titlespacing{\subsection}{0pt}{4pt}{2pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\setlength{\columnsep}{1.2em}
+
+\newcommand{\plim}{\operatorname{plim}}
+\newcommand{\Avar}{\operatorname{Avar}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Introduction to Econometrics --- Formula Sheet}\\[2pt]
+  {\small University of Groningen \quad|\quad Based on Hayashi (2000)}
+\end{center}
+
+\vspace{4pt}
+\begin{multicols}{2}
+
+% ─────────────────────────────────────────────────────────────
+\section{1.\; Classical Linear Regression Model (CLRM)}
+
+\textbf{Model:} $y_i = x_i'\beta + \varepsilon_i$, or in matrix form $y = X\beta + \varepsilon$
+
+\subsection*{Assumptions A1}
+\begin{tabular}{@{}lp{5.6cm}@{}}
+  A1.1 & Linearity: $y_i = x_i'\beta + \varepsilon_i$ \\
+  A1.2 & Random sample: $\{(y_i,x_i')\}$ i.i.d. \\
+  A1.3 & Strict exogeneity: $\E(\varepsilon_i \mid x_i) = 0$ \\
+  A1.4 & Full rank: $\E(x_ix_i')$ has rank $K$ \\
+  A1.5 & Homoskedasticity: $\Var(\varepsilon_i \mid x_i) = \sigma^2$ \\
+  A1.6 & Normality: $\varepsilon_i \mid X \sim \mathcal{N}(0,\sigma^2)$ \small{[for exact tests]}\\
+\end{tabular}
+
+\subsection*{OLS Estimator and Properties}
+\[
+  b = (X'X)^{-1}X'y
+\]
+\[
+  \E(b) = \beta, \qquad \Var(b \mid X) = \sigma^2(X'X)^{-1}
+\]
+\[
+  b \mid X \sim \mathcal{N}\!\left(\beta,\,\sigma^2(X'X)^{-1}\right) \quad \text{(under A1.6)}
+\]
+\[
+  s^2 = \frac{e'e}{n-K}, \qquad \widehat{V}(b) = s^2(X'X)^{-1}
+\]
+where $e = y - Xb$ are OLS residuals.\\
+\textbf{Gauss--Markov:} $b$ is BLUE among linear unbiased estimators.
+
+% ─────────────────────────────────────────────────────────────
+\section{2.\; Hypothesis Testing (Small Sample)}
+
+\subsection*{t-test: $H_0\colon \beta_j = \beta_{j0}$}
+\[
+  t_j = \frac{b_j - \beta_{j0}}{\operatorname{SE}(b_j)} \;\sim\; t(n-K) \quad\text{under }H_0
+\]
+\[
+  \operatorname{SE}(b_j) = \sqrt{s^2\bigl[(X'X)^{-1}\bigr]_{jj}}
+\]
+Reject $H_0$ if $|t_j| > t_{\alpha/2,\,n-K}$.\\
+$(1-\alpha)$ confidence interval: $b_j \pm t_{\alpha/2,\,n-K}\cdot\operatorname{SE}(b_j)$
+
+\subsection*{F-test: $q$ restrictions $H_0\colon R\beta = r$}
+
+\textbf{Wald form:}
+\[
+  F = \frac{(Rb-r)'\bigl[R\,\widehat{V}(b)\,R'\bigr]^{-1}(Rb-r)}{q} \;\sim\; F(q,\,n-K)
+\]
+
+\textbf{SSR form:}
+\[
+  F = \frac{(SSR_R - SSR_U)/q}{SSR_U/(n-K)} \;\sim\; F(q,\,n-K)
+\]
+
+\textbf{$R^2$ form:}
+\[
+  F = \frac{(R^2_U - R^2_R)/q}{(1-R^2_U)/(n-K)} \;\sim\; F(q,\,n-K)
+\]
+
+\textbf{Relationship:} $F(1,n-K) = t(n-K)^2$
+
+\subsection*{Chow Test (structural break across 2 groups)}
+$H_0$: same $\beta$ in both groups (e.g.\ urban vs.\ rural)
+\[
+  F = \frac{(SSR_R - SSR_1 - SSR_2)/K}{(SSR_1+SSR_2)/(n-2K)} \;\sim\; F(K,\,n-2K)
+\]
+$SSR_R$ = pooled restricted; $SSR_1, SSR_2$ = separate unrestricted.
+
+\subsection*{Coefficient Interpretation}
+\begin{tabular}{@{}lp{5cm}@{}}
+  \toprule
+  Model & Interpretation of $\hat\beta_1$ \\
+  \midrule
+  $y = \beta_0+\beta_1 x$ & $\Delta y = \beta_1$ per unit $\Delta x$ \\
+  $\ln y = \beta_0+\beta_1 x$ & $\approx 100\beta_1\%$ change in $y$ per unit $\Delta x$ \\
+  $y = \beta_0+\beta_1\ln x$ & $\beta_1/100$ unit change per $1\%$ $\Delta x$ \\
+  $\ln y = \beta_0+\beta_1\ln x$ & elasticity: $1\%$ $\Delta x \Rightarrow \beta_1\%$ $\Delta y$ \\
+  \bottomrule
+\end{tabular}
+
+% ─────────────────────────────────────────────────────────────
+\section{3.\; Asymptotic Theory}
+
+\subsection*{Assumptions A2 (weaker: no normality, no homoskedasticity required)}
+\begin{tabular}{@{}lp{5.5cm}@{}}
+  A2.1 & Linearity: $y_i = x_i'\delta + \varepsilon_i$ \\
+  A2.2 & i.i.d.\ sample \\
+  A2.3 & Predetermined regressors: $\E(x_i\varepsilon_i) = 0$ \\
+  A2.4 & $\E(x_ix_i')$ nonsingular \\
+\end{tabular}
+
+\subsection*{Key Limit Theorems}
+\[
+  \textbf{LLN}: \quad \bar{z}_n \xrightarrow{p} \E(z_i) \quad \text{(Kolmogorov, i.i.d.)}
+\]
+\[
+  \textbf{CLT}: \quad \sqrt{n}(\bar{z}_n - \mu) \xrightarrow{d} \mathcal{N}(0,\Sigma) \quad\text{(Lindeberg--Levy)}
+\]
+
+\subsection*{OLS under A2}
+\[
+  \plim\, b = \beta \quad\text{(consistency)}
+\]
+\[
+  \sqrt{n}(b-\beta) \xrightarrow{d} \mathcal{N}(0,\,\Avar(b))
+\]
+
+\textbf{General (heteroskedastic) asymptotic variance:}
+\[
+  \Avar(b) = \bigl[\E(x_ix_i')\bigr]^{-1} \E\!\bigl(\varepsilon_i^2 x_ix_i'\bigr) \bigl[\E(x_ix_i')\bigr]^{-1}
+\]
+
+\textbf{Homoskedastic case} ($\E(\varepsilon_i^2\mid x_i)=\sigma^2$)\textbf{:}
+\[
+  \Avar(b) = \sigma^2\bigl[\E(x_ix_i')\bigr]^{-1}
+\]
+
+\textbf{Estimated variance:}
+\[
+  \widehat{V}(b) = \frac{1}{n}\,\widehat{\Avar}(b)
+\]
+
+\textbf{Large-sample Wald test} ($H_0\colon R\beta=r$, $q$ restrictions)\textbf{:}
+\[
+  W = (Rb-r)'\bigl[R\,\widehat{V}(b)\,R'\bigr]^{-1}(Rb-r) \;\xrightarrow{d}\; \chi^2(q)
+\]
+Asymptotically $W/q \approx F(q,\infty)$; use $\chi^2(q)$ critical values.
+
+% ─────────────────────────────────────────────────────────────
+\section{4.\; GLS / FGLS}
+
+When $\Var(\varepsilon \mid X) = \sigma^2 V(X)$ (known $V$):
+\[
+  \tilde{y} = \tilde{X}\beta + \tilde{\varepsilon}, \quad \tilde{y}=Cy,\;\tilde{X}=CX
+\]
+where $C'C = V^{-1}$. GLS = OLS on transformed model; GLS is BLUE.\\
+\textbf{FGLS}: estimate $V$ from data (e.g.\ from OLS residuals), then apply transformation.
+
+% ─────────────────────────────────────────────────────────────
+\section{5.\; Instrumental Variables \& 2SLS}
+
+\subsection*{Why IV? Sources of endogeneity ($\E(x_i\varepsilon_i)\neq 0$)}
+\begin{itemize}[noitemsep,topsep=0pt,leftmargin=*]
+  \item Omitted variable correlated with $x$
+  \item Measurement error in $x$ (attenuation bias: $\plim\,b_1 = \beta_1\cdot\tfrac{\Var(x)}{\Var(x)+\Var(u)} < \beta_1$)
+  \item Simultaneity
+\end{itemize}
+
+\subsection*{Instrument Validity}
+An instrument $z$ must satisfy:
+\begin{enumerate}[noitemsep,topsep=0pt,leftmargin=*]
+  \item \textbf{Relevance}: $\Cov(z_i,x_i)\neq 0$ (testable via first-stage $F>10$)
+  \item \textbf{Exogeneity}: $\E(z_i\varepsilon_i)=0$ (not directly testable; argued on theory)
+\end{enumerate}
+
+\subsection*{Identification}
+\begin{tabular}{@{}lp{5.5cm}@{}}
+  Order condition & $K \geq L$ \;(instruments $\geq$ endogenous regressors); necessary \\
+  Rank condition & $\Sigma_{zx}=\E(z_ix_i')$ has full column rank $L$; necessary \& sufficient \\
+  Just-identified & $K=L$ \\
+  Overidentified & $K>L$ \\
+\end{tabular}
+
+\subsection*{Assumptions A3}
+\begin{tabular}{@{}lp{5.5cm}@{}}
+  A3.1 & Linearity \\
+  A3.2 & Random sample \\
+  A3.3 & Instrument exogeneity: $\E(\varepsilon_i \mid z_i)=0$ \\
+  A3.4 & Rank condition: $\Sigma_{zx}$ full column rank \\
+  A3.5 & Finite second moments \\
+\end{tabular}
+
+\subsection*{IV Estimator (just-identified)}
+\[
+  \hat\delta_\text{IV} = (Z'X)^{-1}Z'y
+\]
+
+\subsection*{2SLS}
+\textbf{Stage 1:} Regress each endogenous $x_j$ on all instruments $z$:
+\[
+  \hat{X} = Z(Z'Z)^{-1}Z'X
+\]
+\textbf{Stage 2:} OLS of $y$ on $\hat{X}$:
+\[
+  \hat\delta_\text{2SLS} = (\hat{X}'\hat{X})^{-1}\hat{X}'y
+\]
+
+\textbf{Asymptotic variance of 2SLS:}
+\[
+  \Avar(\hat\delta_\text{2SLS}) = \sigma_\varepsilon^2\,(\Sigma_{xz}\Sigma_{zz}^{-1}\Sigma_{zx})^{-1}
+\]
+\[
+  \hat\sigma_\varepsilon^2 = \frac{1}{n-L}\sum_{i=1}^n\hat\varepsilon_i^2
+\]
+
+\subsection*{Weak Instruments}
+Rule of thumb: \textbf{first-stage $F > 10$}. Weak instruments inflate standard errors and bias $\hat\delta_\text{2SLS}$ toward OLS.
+
+% ─────────────────────────────────────────────────────────────
+\section{6.\; GMM}
+
+\subsection*{Moment Conditions}
+\[
+  \E\bigl(g_i(\delta)\bigr) = \E\bigl(x_i(y_i - z_i'\delta)\bigr) = 0
+\]
+$z_i$: regressors (possibly endogenous), $x_i$: instruments ($K \geq L$)
+
+\subsection*{GMM Estimator}
+\[
+  \hat\delta(W) = \operatorname*{argmin}_\delta\; g_n(\delta)'\,W\,g_n(\delta)
+\]
+\[
+  g_n(\delta) = \frac{1}{n}\sum_{i=1}^n x_i(y_i - z_i'\delta)
+\]
+
+\textbf{Solution:}
+\[
+  \hat\delta(W) = (S_{xz}'WS_{xz})^{-1}S_{xz}'W\,s_{xy}
+\]
+where $S_{xz}=\tfrac{1}{n}\sum x_iz_i'$, $s_{xy}=\tfrac{1}{n}\sum x_iy_i$.
+
+\textbf{Asymptotic distribution:}
+\[
+  \sqrt{n}(\hat\delta(W)-\delta)\xrightarrow{d}\mathcal{N}(0,\,\Avar[\hat\delta(W)])
+\]
+\[
+  \Avar[\hat\delta(W)] = (\Sigma_{xz}'W\Sigma_{xz})^{-1}\Sigma_{xz}'WSWS\Sigma_{xz}(\Sigma_{xz}'W\Sigma_{xz})^{-1}
+\]
+
+\subsection*{Optimal Weighting Matrix}
+\[
+  W_\text{opt} = S^{-1}, \quad S = \E(\varepsilon_i^2 x_ix_i')
+\]
+\[
+  \Avar[\hat\delta(W_\text{opt})] = (\Sigma_{xz}'S^{-1}\Sigma_{xz})^{-1} \quad\text{(efficient)}
+\]
+
+\textbf{Two-step GMM:} (1) estimate with $W=I$, get residuals; (2) form $\hat{S}=\tfrac{1}{n}\sum\hat\varepsilon_i^2 x_ix_i'$; re-estimate with $W=\hat{S}^{-1}$.\\
+\textbf{Under conditional homoskedasticity}: efficient GMM $=$ 2SLS.
+
+\subsection*{GMM Hypothesis Tests}
+
+\textbf{t-test} ($H_0\colon\delta_j=\delta_{j0}$):
+\[
+  t_j = \frac{\sqrt{n}(\hat\delta_j - \delta_{j0})}{\sqrt{\Avar[\hat\delta]_{jj}}} \xrightarrow{d} \mathcal{N}(0,1)
+\]
+
+\textbf{Wald test} ($H_0\colon R\delta=r$):
+\[
+  n(R\hat\delta-r)'\bigl(R\,\Avar[\hat\delta]\,R'\bigr)^{-1}(R\hat\delta-r) \xrightarrow{d}\chi^2(q)
+\]
+
+% ─────────────────────────────────────────────────────────────
+\section{7.\; Specification Tests}
+
+\subsection*{Hausman Test (is OLS consistent?)}
+\[
+  H_0\colon \E(z_i\varepsilon_i)=0 \;\text{(OLS consistent)}
+\]
+Under $H_0$: $\plim(\hat\delta_\text{2SLS}-\hat\delta_\text{OLS})=0$.
+
+\textbf{Auxiliary regression method (easiest):}
+\begin{enumerate}[noitemsep,topsep=0pt,leftmargin=*]
+  \item Run first stage; save residuals $\hat{v}$
+  \item Regress $y$ on original regressors + $\hat{v}$ by OLS (with robust SEs)
+  \item Test $H_0$: coefficient on $\hat{v}=0$ via $t$-test (or $F$-test if multiple endogenous vars)
+\end{enumerate}
+
+\textbf{Formal statistic:}
+\[
+  H = (\hat\delta_\text{2SLS}-\hat\delta_\text{OLS})'\bigl[\Var(\hat\delta_\text{2SLS})-\Var(\hat\delta_\text{OLS})\bigr]^{-1}(\hat\delta_\text{2SLS}-\hat\delta_\text{OLS}) \xrightarrow{d}\chi^2(q)
+\]
+
+\subsection*{Sargan / Hansen J-test (are extra instruments valid?)}
+Only applicable when \textbf{overidentified} ($K>L$).
+\[
+  H_0\colon \text{all instruments exogenous}
+\]
+
+\textbf{Computation:}
+\begin{enumerate}[noitemsep,topsep=0pt,leftmargin=*]
+  \item Estimate by 2SLS; get residuals $\hat\varepsilon$
+  \item Regress $\hat\varepsilon$ on all instruments $x$; get $R^2$
+  \item $J = n\cdot R^2 \xrightarrow{d}\chi^2(K-L)$
+\end{enumerate}
+Large $J$ rejects $H_0$. Cannot test in just-identified models ($K=L$, df$=0$).
+
+\subsection*{White / Breusch--Pagan Test (is error homoskedastic?)}
+\[
+  H_0\colon \E(\varepsilon_i^2 \mid x_i) = \sigma^2 \;\text{(homoskedasticity)}
+\]
+
+\textbf{Computation:}
+\begin{enumerate}[noitemsep,topsep=0pt,leftmargin=*]
+  \item Run OLS; obtain residuals $e_i$
+  \item Regress $e_i^2$ on regressors (and optionally their squares/cross-products); get $R^2$
+  \item $\text{White} = n \cdot R^2 \xrightarrow{d} \chi^2(m)$
+\end{enumerate}
+where $m$ = number of non-constant regressors in the auxiliary regression.\\
+Large statistic rejects $H_0$. If heteroskedasticity found: use robust (HC) standard errors.
+
+% ─────────────────────────────────────────────────────────────
+\section{8.\; Quick Reference}
+
+\begin{tabular}{@{}p{3.2cm}p{2.4cm}p{1.8cm}@{}}
+  \toprule
+  Situation & Test & Distribution \\
+  \midrule
+  One coeff.\ $= c$ & $t$-test & $t(n-K)$ \\
+  $q$ linear restrictions & $F$-test & $F(q,n-K)$ \\
+  $q$ restrictions (large $n$) & Wald & $\chi^2(q)$ \\
+  Same $\beta$ across groups & Chow & $F(K,n-2K)$ \\
+  OLS consistent? & Hausman & $\chi^2(q)$ \\
+  Extra instruments valid? & Sargan/J & $\chi^2(K-L)$ \\
+  Instruments not weak? & 1st-stage $F$ & $F$; rule: $>10$ \\
+  Homoskedasticity? & White/BP & $\chi^2(m)$ \\
+  \bottomrule
+\end{tabular}
+
+\end{multicols}
+\end{document}
